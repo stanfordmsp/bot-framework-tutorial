@@ -1,5 +1,10 @@
 # Notesy: Recognize intents and entities with LUIS 
 
+Workshop - Georgia Tech
+By: Arvind Ramaswami (GT) Jhillika Kumar (GT) Kirtan Patel (GT) Agni Kumar (MIT) Racquel Butler (GSU) Ashwin Ramaswami (Stanford)
+March 28, 2018
+Slides: https://docs.google.com/presentation/d/1Vlhnj-0pzNtqU79tLroJoJJOzw1PB0VFm86zjsZ16FI/edit#slide=id.g28e4f442e9_0_39
+
 <img src="https://user-images.githubusercontent.com/1689183/38057661-1fbee288-32ae-11e8-8a47-44b56507bd48.png" width="400">
 
 This article uses the example of a bot for taking notes, to demonstrate how Language Understanding ([LUIS][LUIS]) helps your bot respond appropriately to natural language input. A bot detects what a user wants to do by identifying their **intent**. This intent is determined from spoken or textual input, or **utterances**. The intent maps utterances to actions that the bot takes, such as invoking a dialog. A bot may also need to extract **entities**, which are important words in utterances. Sometimes entities are required to fulfill an intent. In the example of a note-taking bot, the `Notes.Title` entity identifies the title of each note.
