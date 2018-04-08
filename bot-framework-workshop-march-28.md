@@ -1,8 +1,11 @@
 # Notesy: Recognize intents and entities with LUIS 
 
 Workshop - Georgia Tech
+
 By: Arvind Ramaswami (GT) Jhillika Kumar (GT) Kirtan Patel (GT) Agni Kumar (MIT) Racquel Butler (GSU) Ashwin Ramaswami (Stanford)
+
 March 28, 2018
+
 Slides: https://docs.google.com/presentation/d/1Vlhnj-0pzNtqU79tLroJoJJOzw1PB0VFm86zjsZ16FI/edit#slide=id.g28e4f442e9_0_39
 
 <img src="https://user-images.githubusercontent.com/1689183/38057661-1fbee288-32ae-11e8-8a47-44b56507bd48.png" width="400">
