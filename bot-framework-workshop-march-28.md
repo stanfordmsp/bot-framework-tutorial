@@ -1,36 +1,25 @@
----
-title: Recognize intents and entities with LUIS  | Microsoft Docs
-description: Integrate a bot with LUIS to detect the user's intent and respond appropriately by triggering dialogs using the Bot Builder SDK for Node.js. 
-author: DeniseMak
-ms.author: v-demak
-manager: kamrani
-ms.topic: article
-ms.prod: bot-framework
-ms.date: 12/13/2017
----
+# Notesy: Recognize intents and entities with LUIS 
 
-# Recognize intents and entities with LUIS 
+<img src="https://user-images.githubusercontent.com/1689183/38057661-1fbee288-32ae-11e8-8a47-44b56507bd48.png" width="400">
 
 This article uses the example of a bot for taking notes, to demonstrate how Language Understanding ([LUIS][LUIS]) helps your bot respond appropriately to natural language input. A bot detects what a user wants to do by identifying their **intent**. This intent is determined from spoken or textual input, or **utterances**. The intent maps utterances to actions that the bot takes, such as invoking a dialog. A bot may also need to extract **entities**, which are important words in utterances. Sometimes entities are required to fulfill an intent. In the example of a note-taking bot, the `Notes.Title` entity identifies the title of each note.
 
 ## Create a Language Understanding bot with Bot Service
 
-1. In the [Azure portal](https://portal.azure.com), select **Create new resource** in the menu blade and click **See all**.
+1. In the [Azure portal](https://portal.azure.com), select **Create new resource** in the menu blade and click **See all**. (If you don't already have an Azure account, please go to http://imagine.microsoft.com/ and sign up with your student email. This gives you $100 of free credit to begin using the account.)
 
-    ![Create new resource](../media/bot-builder-nodejs-use-luis/bot-service-creation.png)
+    ![Create new resource](https://user-images.githubusercontent.com/1689183/38473963-da82d8d0-3b4c-11e8-9dc0-4f68bf8e0b93.png)
 
 2. In the search box, search for **Web App Bot**. 
 
-    ![Create new resource](../media/bot-builder-nodejs-use-luis/bot-service-selection.png)
+    ![Create new resource](https://user-images.githubusercontent.com/1689183/38473965-dea454ca-3b4c-11e8-802b-e94803398e15.png)
 
 3. In the **Bot Service** blade, provide the required information, and click **Create**. This creates and deploys the bot service and LUIS app to Azure. 
     * Set **App name** to your bot’s name. The name is used as the subdomain when your bot is deployed to the cloud (for example, mynotesbot.azurewebsites.net). This name is also used as the name of the LUIS app associated with your bot. Copy it to use later, to find the LUIS app associated with the bot.
     * Select the subscription, [resource group](/azure/azure-resource-manager/resource-group-overview), App service plan, and [location](https://azure.microsoft.com/en-us/regions/).
     * Select the **Language understanding (Node.js)** template for the **Bot template** field.
 
-    ![Bot Service blade](../media/bot-builder-nodejs-use-luis/bot-service-setting-callout-template.png)
-
-    * Check the box to confirm to the terms of service.
+![image](https://user-images.githubusercontent.com/1689183/38056201-dbbcca90-32a9-11e8-92a7-9aa7a4caed65.png)
 
 4. Confirm that the bot service has been deployed.
     * Click Notifications (the bell icon that is located along the top edge of the Azure portal). The notification will change from **Deployment started** to **Deployment succeeded**.
@@ -42,19 +31,20 @@ Confirm that the bot has been deployed by checking the **Notifications**. The no
 
 Once the bot is registered, click **Test in Web Chat** to open the Web Chat pane. Type "hello" in Web Chat.
 
-  ![Test the bot in Web Chat](../media/bot-builder-nodejs-use-luis/bot-service-web-chat.png)
+  ![Test the bot in Web Chat](https://user-images.githubusercontent.com/1689183/38473970-e3d786f6-3b4c-11e8-9814-853db6d9e764.png)
 
 The bot responds by saying "You have reached Greeting. You said: hello". This confirms that the bot has received your message and passed it to a default LUIS app that it created. This default LUIS app detected a Greeting intent.
 
 ## Modify the LUIS app
 
-Log in to [https://www.luis.ai](https://www.luis.ai) using the same account you use to log in to Azure. Click on **My apps**. In the list of apps, find the app that begins with the name specified in **App name** in the **Bot Service** blade when you created the Bot Service. 
+Log in to [https://www.luis.ai](https://www.luis.ai) using the same account you use to log in to Azure. Scroll all the way down and click on **Create LUIS app** to get started. In the list of apps, find the app that begins with the name specified in **App name** in the **Bot Service** blade when you created the Bot Service. 
 
-The LUIS app starts with 4 intents: Cancel: Greeting, Help, and None. <!-- picture -->
+The LUIS app starts with 4 intents: Cancel, Greeting, Help, and None; and a fifth, custom intent you will add later! <!-- picture -->
 
+### Add predefined intents
 The following steps add the Note.Create, Note.ReadAloud, and Note.Delete intents: 
 
-1. Click on **Prebuit Domains** in the lower left of the page. Find the **Note** domain and click **Add domain**.
+1. Click on **Prebuilt Domains** in the lower left of the page. Find the **Note** domain and click **Add domain**.
 
 2. This tutorial doesn't use all of the intents included in the **Note** prebuilt domain. In the **Intents** page, click on each of the following intent names and then click the **Delete Intent** button.
    * Note.ShowNext
@@ -73,16 +63,36 @@ The following steps add the Note.Create, Note.ReadAloud, and Note.Delete intents
    * Greeting
    * Cancel 
 
-    ![intents shown in LUIS app](../media/bot-builder-nodejs-use-luis/luis-intent-list.png)
+    ![intents shown in LUIS app](https://user-images.githubusercontent.com/1689183/38473974-ea7bbb1c-3b4c-11e8-9e1a-272413495104.png)
+### Add your own custom intent
+Time to add your own custom intent! Click on "Create new intent" to create a new intent.
 
-3.	Click the **Train** button in the upper right to train your app.
-4.	Click **PUBLISH** in the top navigation bar to open the **Publish** page. Click the **Publish to production slot** button. After successful publish, copy the URL displayed in the **Endpoint** column the **Publish App** page, in the row that starts with the Resource Name Starter_Key. Save this URL to use later in your bot’s code. The URL has a format similar to this example: `https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx?subscription-key=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx&timezoneOffset=0&verbose=true&q=`
+In this example, we are creating a new intent which lets the bot know if you want to drop out of school.
+
+1. Click on "Create intent" and type "Dropout" as the intent name.
+![image](https://user-images.githubusercontent.com/1689183/38036918-ce6cddfa-3275-11e8-8f31-dba7872cdf94.png)
+
+1. Enter several examples of what the user may say in order for the bot to recognize the "Dropout" intent.
+![image](https://user-images.githubusercontent.com/1689183/38037164-3fcf5bd0-3276-11e8-8571-de2ec7432d17.png)
+
+After you've typed a few phrases, the screen should look like this:
+
+![image](https://user-images.githubusercontent.com/1689183/38037106-27089a44-3276-11e8-9043-7690e5cfea17.png)
+
+1. Finally, click on the "Train" button on the top right to train your bot. Then click on the "Test" button to test your intent. Type in a few phrases that have the same meaning as dropping out of school and see what the bot classifies it as. You can also try phrases such as "create a note" to see what intents it classifies your phrases as. You can see that the bot has varying levels of success with classifying intents; this may improve with better training data.
+
+![image](https://user-images.githubusercontent.com/1689183/38037287-8e618fe8-3276-11e8-9a10-3bacd51b6d9a.png)
+
+### Train and publish
+Run the following steps; you will need to run these whenever you change your intents and configured phrases.
+1.	Click the **Train** button in the upper right to train your app.
+1.	Click **PUBLISH** in the top navigation bar to open the **Publish** page. Click the **Publish to production slot** button. And you're done!
 
 ## Modify the bot code
 
-Click **Build** and then click **Open online code editor**.
+Back in the Azure portal, click **Build** and then click **Open online code editor**.
 
-   ![Open online code editor](../media/bot-builder-nodejs-use-luis/bot-service-build.png)
+   ![Open online code editor](https://user-images.githubusercontent.com/1689183/38473979-f039b784-3b4c-11e8-9fad-b9e48c0dd489.png)
 
 In the code editor, open `app.js`. It contains the following code:
 
@@ -178,7 +188,7 @@ bot.dialog('CancelDialog',
 
 
 ## Handle the None intent
-The [matches][intentDialog_matches] methods on the [IntentDialog][intentDialog] invokes a handler when the specified intent is detected in the user utterance. To add a handler for the `None` intent, copy the following code and paste it after the `.matches` handler for the Cancel intent, before `onDefault`.
+The [matches][intentDialog_matches] methods on the [IntentDialog][intentDialog] invokes a handler when the specified intent is detected in the user utterance. To add a handler for the `None` intent, copy the following code and paste it at the end of the file.
 ```javascript
 bot.dialog('NoneDialog',
     (session) => {
@@ -197,7 +207,7 @@ bot.dialog('NoneDialog',
 
 ## Handle the Note.Create intent
 
-Copy the following code and paste it after the handler for None that you just pasted, before `onDefault`:
+Copy the following code and paste it after the handler for None that you just pasted:
 ```javascript
 bot.dialog('NoteCreateDialog', [(session, args, next) => {
         // Resolve and store any Note.Title entity passed from LUIS.
@@ -260,7 +270,7 @@ Just as for the `Note.Create` intent, the bot examines the `args` parameter for 
 
 
 
-Copy the following code and paste it after the handler for `Note.Create` that you just pasted, before `onDefault`:
+Copy the following code and paste it after the handler for `Note.Create` that you just pasted:
 ```javascript
 bot.dialog('NoteDeleteDialog', [(session, args, next) => {
         if (noteCount(session.userData.notes) > 0) {
@@ -292,23 +302,9 @@ bot.dialog('NoteDeleteDialog', [(session, args, next) => {
 });
 ```
 
-The code that handles `Note.Delete` uses the `noteCount` function to determine whether the `notes` object contains notes. 
-
-Paste the `noteCount` helper function at the end of `app.js`:
-```javascript
-function noteCount(notes) {
-
-    var i = 0;
-    for (var name in notes) {
-        i++;
-    }
-    return i;
-}
-```
-
 ## Handle the Note.ReadAloud intent
 
-Copy the following code and paste it after the handler for `Note.Create` that you just pasted, before `onDefault`:
+Copy the following code and paste it after the handler for `Note.Create` that you just pasted:
 
 ```javascript
 bot.dialog('NoteReadAloudDialog', [(session, args, next) => {
@@ -338,6 +334,43 @@ bot.dialog('NoteReadAloudDialog', [(session, args, next) => {
     }]
 ).triggerAction({
     matches: 'Note.ReadAloud'
+});
+```
+
+## Add the `noteCount` helper function
+
+The code that handles `Note.Delete` uses the `noteCount` function to determine whether the `notes` object contains notes. 
+
+Paste the `noteCount` helper function at the end of `app.js`:
+```javascript
+function noteCount(notes) {
+
+    var i = 0;
+    for (var name in notes) {
+        i++;
+    }
+    return i;
+}
+```
+
+## Handle your custom dropout intent
+Now it's time to handle your custom dropout intent! Note that ```session.endDialog``` gives the bot's response. The following code is an example of some code that helps pick a random response, once the bot understands that the user wants to drop out. Feel free to tweak this code or make it more complex!
+```
+bot.dialog('DropoutDialog', (session) => {
+        var possibleResponses = [
+          "Oh no! Don't drop out of school, it's worth it!",
+          "Dropping out of school is a terrible decision.",
+          "Don't worry! I'll support you!",
+          "If Bill Gates dropped out of school, you can too!"
+        ];
+        var response = possibleResponses[Math.floor(Math.random() * possibleResponses.length)];
+        if (noteCount(session.userData.notes) > 0) {
+            response += " You even have " + noteCount(session.userData.notes) + "notes!";
+        }
+        session.endDialog(response);
+    }
+).triggerAction({
+    matches: 'Dropout'
 });
 ```
 
@@ -561,18 +594,75 @@ function noteCount(notes) {
     }
     return i;
 }
+
+bot.dialog('DropoutDialog', (session) => {
+        var possibleResponses = [
+          "Oh no! Don't drop out of school, it's worth it!",
+          "Dropping out of school is a terrible decision.",
+          "Don't worry! I'll support you!",
+          "If Bill Gates dropped out of school, you can too!"
+        ];
+        var response = possibleResponses[Math.floor(Math.random() * possibleResponses.length)];
+        if (noteCount(session.userData.notes) > 0) {
+            response += " You even have " + noteCount(session.userData.notes) + "notes!";
+        }
+        session.endDialog(response);
+    }
+).triggerAction({
+    matches: 'Dropout'
+});
+
 ```
 
 ## Test the bot
 
 In the Azure Portal, click on **Test in Web Chat** to test the bot. Try type messages like "Create a note", "read my notes", and "delete notes" to invoke the intents that you added to it.
-   ![Test notes bot in Web Chat](../media/bot-builder-nodejs-use-luis/bot-service-test-notebot.png)
+   ![Test notes bot in Web Chat](https://user-images.githubusercontent.com/1689183/38473982-f6483fa6-3b4c-11e8-810b-e809abfac64e.png)
+
+And, you can also try your custom intent that you had created before:
+
+![image](https://user-images.githubusercontent.com/1689183/38038133-58631fe0-3278-11e8-83b5-67c2e10ae20f.png)
 
 > [!TIP]
 > If you find that your bot doesn't always recognize the correct intent or entities, improve your LUIS app's performance by giving it more example utterances to train it. You can retrain your LUIS app without any modification to your bot's code. See [Add example utterances](/azure/cognitive-services/LUIS/add-example-utterances) and [train and test your LUIS app](/azure/cognitive-services/LUIS/train-test).
 
-## Deploy your bot to a website, Skype, Slack, Facebook, etc.
-Learn how to deploy your bot to webchat at this link: *[https://docs.microsoft.com/en-us/azure/bot-service/bot-service-channel-connect-webchat](https://docs.microsoft.com/en-us/azure/bot-service/bot-service-channel-connect-webchat)*
+## Share and deploy your bot!
+### Deploy by web channels
+
+Get your bot secret key
+Open your bot in the Azure Portal and click Channels blade.
+
+1. Click Edit for the Web Chat channel.
+![image](https://user-images.githubusercontent.com/1689183/38038698-932e53fa-3279-11e8-8d5f-546022598337.png)
+
+1. Under Secret keys, click Show for the first key.
+![image](https://user-images.githubusercontent.com/1689183/38038702-973e0bca-3279-11e8-9b60-cbf70f207e3a.png)
+
+
+1. Copy the Secret key and the Embed code.
+
+1. Click Done.
+
+### Embed your bot in a website
+
+To embed your bot in your website by specifying the secret within the iframe tag:
+
+1. Copy the iframe Embed code from the Web Chat channel within the Bot Framework Portal (as described in the steps above).
+
+1. Within that Embed code, replace "YOUR_SECRET_HERE" with the Secret key value that you copied from the same page.
+
+```
+<iframe src="https://webchat.botframework.com/embed/YOUR_BOT_ID?s=YOUR_SECRET_HERE"></iframe>
+```
+
+1. You can now add the above HTML code to any website (such as your personal website) to embed the bot. You can also just go to the URL `https://webchat.botframework.com/embed/YOUR_BOT_ID?s=YOUR_SECRET_HERE` in your web browser to interact with your bot -- share this link with others so they can use your bot as well!
+
+Here's a finished example: **https://webchat.botframework.com/embed/arvind-note-bot?s=uvrjVpZN9OI.cwA.qNg.bKim9V6FrD-I1d3fz1b2WIjfhTiTtCFSD819e-QBvfM**
+
+### Integrating your bot with Facebook, Slack, Skype, email, and more
+Each platform requires a specific setup and registration with developer accounts. Read this tutorial for more information about how to integrate your bot with other platforms: **https://docs.microsoft.com/en-us/azure/bot-service/bot-service-channel-connect-slack**
+
+Note: as of now, Facebook is not allowing new Messenger bots to be created while they update their policies.
 
 
 ## Next steps
